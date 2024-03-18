@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SOC</title>
+    <style>
+        * {
+            font-size: small;
+            font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+        }
+
+        .progress-bar {
+            width: 200px;
+            height: 20px;
+            background-color: #eee;
+            border: 1px solid #ccc;
+            position: relative;
+            text-align: center;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: #4CAF50;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0.0%; /* Adjust this value based on the SoC */
+        }
+
+        .timestamp {
+            height: 20px;
+            color: #707070;
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-bar">
+        <div class="progress-fill"></div>
+    </div>
+    <div class="timestamp"></div>
+    <script>
+        const apiUrl = 'https://app.evnotify.de/soc?akey=a802cd&token=41eea2d8683db47dad22';
+
+        // Get data and if successful, display it
+        fetch(apiUrl)
+        .then(response => {
+            if (!response.ok) {
+            throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(apiData => {
+            const date = new Date(apiData.last_soc * 1000); // Convert seconds to milliseconds
+            const formattedDate = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
+            const timestampElement = document.querySelector('.timestamp');
+            const progressFillElement = document.querySelector('.progress-fill');
+            timestampElement.textContent = `Last SOC: ${formattedDate} UTC`;
+            progressFillElement.style.width = `${apiData.soc_display}%`;
+            progressFillElement.textContent = `${apiData.soc_display}%`;
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    </script>
+</body>
+</html>
