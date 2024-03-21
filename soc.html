@@ -52,11 +52,12 @@
             return response.json();
         })
         .then(apiData => {
-            const date = new Date(apiData.last_soc * 1000); // Convert seconds to milliseconds
-            const formattedDate = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
+            const odate = new Date(apiData.last_soc * 1000); // Convert seconds to milliseconds
+            const date = new Date(odate).toLocaleDateString("de-DE");
+            const time = new Date(odate).toLocaleTimeString("de-DE");
             const timestampElement = document.querySelector('.timestamp');
             const progressFillElement = document.querySelector('.progress-fill');
-            timestampElement.textContent = `Last SOC: ${formattedDate} UTC`;
+            timestampElement.textContent = `Last reading: ${date} ${time}`;
             progressFillElement.style.width = `${apiData.soc_display}%`;
             progressFillElement.textContent = `${apiData.soc_display}%`;
         })
